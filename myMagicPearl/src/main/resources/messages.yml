@@ -1,0 +1,33 @@
+####################################
+# --- myMagicPearl v1.0 Plugin --- #
+####################################
+
+#This is a messages for myMagicPearl plugin!
+#More info you can find in plugin documentation or in our discord: https://discord.gg/qTpgQXQZye
+
+#Variables:
+#{sender} = command sender name - Usage in "no-permission"
+
+#This message will be sent if player run command but doesn't have permission to do this
+no-permission: "&cYou don't have permission to do that!"
+
+#This message will be sent if command sender is not a player
+bad-sender: "&cThis command can only be used by a player!"
+
+#This message will be sent if player use /givepearl command and pearl was successfully give
+successfully-give: "&aSuccessfully give a pearl!"
+
+#This message will be sent if player try to do something what is not allowed
+cannot-do-it: "&cYou cannot do it!"
+
+#This message will be sent if player successfully set pearl lobby
+successfully-set-lobby: "&aSuccessfully set pearl lobby!"
+
+#This message will be sent if player try to teleport to lobby, but it not set
+not-set-lobby: "&cYou don't set pearl lobby!"
+
+#This message will be sent if player try to get pearl but can't because slot is busy
+slot-is-busy: "&cYour slot in inventory is busy!"
+
+#This message will be sent if player was successfully teleported to pearl lobby
+successfully-teleport-to-lobby: "&aSuccessfully teleported to pearl lobby!"

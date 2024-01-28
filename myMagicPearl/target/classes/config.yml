@@ -1,0 +1,34 @@
+####################################
+# --- myMagicPearl v1.0 Plugin --- #
+####################################
+
+#This is a config for myMagicPearl plugin!
+#More info you can find in plugin documentation or in our discord: https://discord.gg/qTpgQXQZye
+
+#Plugin should checking for new updates
+check-for-updates: true
+
+#Pearl settings
+pearl:
+  slot: 0
+  display-name: "&6Magic Pearl"
+  cooldown: 10
+
+#Pearl lobby settings
+lobby:
+  location:
+    x:
+    y:
+    z:
+    world:
+    yaw:
+    pitch:
+
+#Allow to drop pearl from player inventory
+allow-drop-pearl: false
+
+#Pearl give damage on teleportation
+pearl-give-damage: false
+
+#Replace item on slot
+replace-item: true
