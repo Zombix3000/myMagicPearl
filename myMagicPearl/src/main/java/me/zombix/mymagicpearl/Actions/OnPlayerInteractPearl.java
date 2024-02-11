@@ -71,6 +71,8 @@ public class OnPlayerInteractPearl implements Listener {
                             isBlocked.put(player.getUniqueId(), "Nothing");
                         }
                     } else {
+                        event.setCancelled(true);
+                        isBlocked.put(player.getUniqueId(), "Nothing");
                         player.sendMessage(noPermission.replace("{player}", player.getName()));
                     }
                 }
