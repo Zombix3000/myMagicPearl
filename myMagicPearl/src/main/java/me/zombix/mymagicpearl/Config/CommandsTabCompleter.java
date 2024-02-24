@@ -28,12 +28,33 @@ public class CommandsTabCompleter implements TabCompleter {
                 if (sender.hasPermission("mymagicpearl.setpearllobby")) {
                     subCommands.add("setpearllobby");
                 }
+                if (sender.hasPermission("mymagicpearl.managepermissions")) {
+                    subCommands.add("permission");
+                }
 
                 subCommands.add("givepearl");
             }
 
             for (String subCommand : subCommands) {
                 if (subCommand.startsWith(enteredCommand)) {
+                    completions.add(subCommand);
+                }
+            }
+        } else if (args.length == 2) {
+            String SubCommand = args[1].toLowerCase();
+
+            List<String> subCommands = new ArrayList<>();
+
+            if (command.getName().toLowerCase().equals("mymagicpearl")) {
+                if (sender.hasPermission("mymagicpearl.managepermissions")) {
+                    subCommands.add("add");
+                    subCommands.add("edit");
+                    subCommands.add("delete");
+                }
+            }
+
+            for (String subCommand : subCommands) {
+                if (subCommand.startsWith(SubCommand)) {
                     completions.add(subCommand);
                 }
             }

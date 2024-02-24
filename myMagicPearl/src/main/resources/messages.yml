@@ -31,3 +31,24 @@ slot-is-busy: "&cYour slot in inventory is busy!"
 
 #This message will be sent if player was successfully teleported to pearl lobby
 successfully-teleport-to-lobby: "&aSuccessfully teleported to pearl lobby!"
+
+#This message will be sent if player was successfully teleported to pearl lobby
+player-not-online: "&cPlayer is not online!"
+
+#This message will be sent if wasn't give a number
+no-integer: "&cCooldown number must be integer!"
+
+#This message will be sent if successfully added new permission
+added-permission: "&aSuccessfully added new &6{permission} &apermission with &6{cooldown} &acooldown!"
+
+#This message will be sent if successfully added new permission
+edit-permission: "&aSuccessfully edit &6{permission} &apermission with &6{cooldown} &acooldown!"
+
+#This message will be sent if try to add new permission, but it already exists
+already-permission-is: "&cThis permission is already exists!"
+
+#This message will be sent if try edit or delete permission but this permission is not in permissions.yml
+is-not-permission: "&cThis permission isn't in permissions.yml!"
+
+#This message will be sent if deleted permission
+deleted-permission: '&aSuccessfully deleted &6{permission} &apermission!'

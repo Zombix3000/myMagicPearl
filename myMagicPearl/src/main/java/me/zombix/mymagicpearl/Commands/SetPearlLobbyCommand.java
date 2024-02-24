@@ -28,30 +28,33 @@ public class SetPearlLobbyCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
+            FileConfiguration mainConfig = configManager.getMainConfig();
 
-            if (player.hasPermission("mymagicpearl.setpearllobby")) {
-                FileConfiguration mainConfig = configManager.getMainConfig();
-                Location lobbyLocation = player.getLocation();
+            if (mainConfig.getBoolean("lobby-enabled")) {
+                if (player.hasPermission("mymagicpearl.setpearllobby")) {
 
-                String worldName = lobbyLocation.getWorld().getName();
-                double x = lobbyLocation.getX();
-                double y = lobbyLocation.getY();
-                double z = lobbyLocation.getZ();
-                float yaw = lobbyLocation.getYaw();
-                float pitch = lobbyLocation.getPitch();
+                    Location lobbyLocation = player.getLocation();
 
-                mainConfig.set("lobby" + "." + "location" + "." + "x", x);
-                mainConfig.set("lobby" + "." + "location" + "." + "y", y);
-                mainConfig.set("lobby" + "." + "location" + "." + "z", z);
-                mainConfig.set("lobby" + "." + "location" + "." + "world", worldName);
-                mainConfig.set("lobby" + "." + "location" + "." + "yaw", yaw);
-                mainConfig.set("lobby" + "." + "location" + "." + "pitch", pitch);
+                    String worldName = lobbyLocation.getWorld().getName();
+                    double x = lobbyLocation.getX();
+                    double y = lobbyLocation.getY();
+                    double z = lobbyLocation.getZ();
+                    float yaw = lobbyLocation.getYaw();
+                    float pitch = lobbyLocation.getPitch();
 
-                configManager.saveMainConfig();
+                    mainConfig.set("lobby" + "." + "location" + "." + "x", x);
+                    mainConfig.set("lobby" + "." + "location" + "." + "y", y);
+                    mainConfig.set("lobby" + "." + "location" + "." + "z", z);
+                    mainConfig.set("lobby" + "." + "location" + "." + "world", worldName);
+                    mainConfig.set("lobby" + "." + "location" + "." + "yaw", yaw);
+                    mainConfig.set("lobby" + "." + "location" + "." + "pitch", pitch);
 
-                player.sendMessage(successfullySet.replace("{palyer}", sender.getName()));
-            } else {
-                player.sendMessage(noPermission.replace("{palyer}", sender.getName()));
+                    configManager.saveMainConfig();
+
+                    player.sendMessage(successfullySet.replace("{palyer}", sender.getName()));
+                } else {
+                    player.sendMessage(noPermission.replace("{palyer}", sender.getName()));
+                }
             }
         } else {
             sender.sendMessage(badSender);

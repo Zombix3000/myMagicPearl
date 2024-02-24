@@ -38,7 +38,7 @@ public class Updates {
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
-                JsonObject jsonObject = JsonParser.parseReader(new java.io.InputStreamReader(inputStream)).getAsJsonObject();
+                JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
                 String latestVersion = jsonObject.get("tag_name").getAsString();
 
                 return !latestVersion.equals(currentVersion);
@@ -58,8 +58,8 @@ public class Updates {
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
-                JsonObject jsonObject = JsonParser.parseReader(new java.io.InputStreamReader(inputStream)).getAsJsonObject();
-                return jsonObject.get("tag_name").getAsString();
+                JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
+                return jsonObject.get("tag_name").getAsString().replace("v", "");
             }
         } catch (IOException e) {
             e.printStackTrace();

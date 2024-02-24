@@ -12,9 +12,10 @@ check-for-updates: true
 pearl:
   slot: 0
   display-name: "&6Magic Pearl"
-  cooldown: 10
+  default-cooldown: 10
 
 #Pearl lobby settings
+lobby-enabled: true
 lobby:
   location:
     x:
@@ -32,3 +33,8 @@ pearl-give-damage: false
 
 #Replace item on slot
 replace-item: true
+
+#Pearl subtitles
+subtitles-enabled: true
+subtitles:
+  action-bar: "&eUsing pearl..."

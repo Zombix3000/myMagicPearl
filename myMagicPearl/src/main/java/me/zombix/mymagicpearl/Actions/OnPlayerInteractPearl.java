@@ -1,9 +1,14 @@
 package me.zombix.mymagicpearl.Actions;
 
 import me.zombix.mymagicpearl.Config.ConfigManager;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -23,8 +28,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static org.bukkit.Bukkit.getLogger;
 
 public class OnPlayerInteractPearl implements Listener {
     private final ConfigManager configManager;
@@ -137,31 +140,33 @@ public class OnPlayerInteractPearl implements Listener {
         Player player = event.getPlayer();
         FileConfiguration mainConfig = configManager.getMainConfig();
 
-        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            //return;
-        } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            if (isBlocked.containsKey(player.getUniqueId())) {
-                isBlocked.remove(player.getUniqueId());
-            } else {
-                if (player.getInventory().getItemInMainHand().getType() == Material.ENDER_PEARL && player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', mainConfig.getString("pearl" + "." + "display-name")))) {
-                    if (player.hasPermission("mymagicpearl.teleporttolobby")) {
-                        event.setCancelled(true);
+        if (mainConfig.getBoolean("lobby-enabled")) {
+            if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                //return;
+            } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                if (isBlocked.containsKey(player.getUniqueId())) {
+                    isBlocked.remove(player.getUniqueId());
+                } else {
+                    if (player.getInventory().getItemInMainHand().getType() == Material.ENDER_PEARL && player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', mainConfig.getString("pearl" + "." + "display-name")))) {
+                        if (player.hasPermission("mymagicpearl.teleporttolobby")) {
+                            event.setCancelled(true);
 
-                        double x = mainConfig.getDouble("lobby" + "." + "location" + "." + "x");
-                        double y = mainConfig.getDouble("lobby" + "." + "location" + "." + "y");
-                        double z = mainConfig.getDouble("lobby" + "." + "location" + "." + "z");
-                        String worldName = mainConfig.getString("lobby" + "." + "location" + "." + "world");
-                        float yaw = (float) mainConfig.getDouble("lobby" + "." + "location" + "." + "yaw");
-                        float pitch = (float) mainConfig.getDouble("lobby" + "." + "location" + "." + "pitch");
+                            double x = mainConfig.getDouble("lobby" + "." + "location" + "." + "x");
+                            double y = mainConfig.getDouble("lobby" + "." + "location" + "." + "y");
+                            double z = mainConfig.getDouble("lobby" + "." + "location" + "." + "z");
+                            String worldName = mainConfig.getString("lobby" + "." + "location" + "." + "world");
+                            float yaw = (float) mainConfig.getDouble("lobby" + "." + "location" + "." + "yaw");
+                            float pitch = (float) mainConfig.getDouble("lobby" + "." + "location" + "." + "pitch");
 
-                        if (worldName != null) {
-                            player.teleport(new Location(player.getServer().getWorld(worldName), x, y, z, yaw, pitch));
-                            player.sendMessage(successfullyTeleportToLobby.replace("{player}", player.getName()));
+                            if (worldName != null) {
+                                player.teleport(new Location(player.getServer().getWorld(worldName), x, y, z, yaw, pitch));
+                                player.sendMessage(successfullyTeleportToLobby.replace("{player}", player.getName()));
+                            } else {
+                                player.sendMessage(notSetLobby.replace("{player}", player.getName()));
+                            }
                         } else {
-                            player.sendMessage(notSetLobby.replace("{player}", player.getName()));
+                            player.sendMessage(noPermission.replace("{player}", player.getName()));
                         }
-                    } else {
-                        player.sendMessage(noPermission.replace("{player}", player.getName()));
                     }
                 }
             }
@@ -187,6 +192,8 @@ public class OnPlayerInteractPearl implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
+                showActionBar(player);
+
                 if (!enderPearl.isValid()) {
                     thrownPearls.remove(playerUUID);
                     cancel();
@@ -208,6 +215,7 @@ public class OnPlayerInteractPearl implements Listener {
         enderPearl.remove();
 
         Bukkit.getScheduler().cancelTasks(plugin);
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(""));
     }
 
     private boolean isSpawnedByMagicPearl(CreatureSpawnEvent event) {
@@ -224,8 +232,12 @@ public class OnPlayerInteractPearl implements Listener {
     }
 
     private void doPearlCooldown(Player player) {
-        FileConfiguration mainConfig = configManager.getMainConfig();
-        int cooldown = mainConfig.getInt("pearl" + "." + "cooldown");
+        int cooldown = configManager.getCooldownForPermission(player);
+        if (cooldown < 1) {
+            cooldown = 1;
+        } else if (cooldown > 64) {
+            cooldown = 64;
+        }
 
         pearlsCooldown.put(player.getUniqueId(), cooldown);
         giveCooldownPearls(player, cooldown);
@@ -255,6 +267,42 @@ public class OnPlayerInteractPearl implements Listener {
         magicPearl.setItemMeta(meta);
 
         player.getInventory().setItem(slot, magicPearl);
+    }
+
+    private void showActionBar(Player player) {
+        FileConfiguration mainConfig = configManager.getMainConfig();
+        String actionbarText = mainConfig.getString("subtitles.action-bar");
+
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', actionbarText)));
+        //-------------------------------------------------------------------------------------------------------------
+        /*if (mainConfig.getBoolean("animation-enabled")) {
+            String actionbarStep1 = mainConfig.getString("subtitles.action-bar.animation.1");
+            String actionbarStep2 = mainConfig.getString("subtitles.action-bar.animation.2");
+            String actionbarStep3 = mainConfig.getString("subtitles.action-bar.animation.3");
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', actionbarText + actionbarStep1)));
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', actionbarText + actionbarStep2)));
+                        }
+                    }.runTaskLater(plugin, 10);
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', actionbarText + actionbarStep3)));
+                        }
+                    }.runTaskLater(plugin, 20);
+                }
+            }.runTaskTimer(plugin, 0, 30);
+        } else {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', actionbarText)));
+        }*/
     }
 
 }

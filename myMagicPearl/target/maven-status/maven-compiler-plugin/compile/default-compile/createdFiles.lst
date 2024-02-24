@@ -1,8 +1,10 @@
 me\zombix\mymagicpearl\Actions\OnPlayerInteractPearl$1.class
 me\zombix\mymagicpearl\Config\CommandsTabCompleter.class
+me\zombix\mymagicpearl\Commands\EditPermissionCommand.class
 me\zombix\mymagicpearl\Commands\MyMagicPearlCommand.class
 me\zombix\mymagicpearl\Config\ConfigManager.class
 me\zombix\mymagicpearl\Commands\UpdateCommand.class
+me\zombix\mymagicpearl\Commands\DeletePermissionCommand.class
 me\zombix\mymagicpearl\Commands\GivePearlCommand.class
 me\zombix\mymagicpearl\Actions\BlockPearlInteract.class
 me\zombix\mymagicpearl\Config\Updates.class
@@ -10,4 +12,5 @@ me\zombix\mymagicpearl\Commands\SetPearlLobbyCommand.class
 me\zombix\mymagicpearl\Commands\ReloadCommand.class
 me\zombix\mymagicpearl\MyMagicPearl.class
 me\zombix\mymagicpearl\Actions\OnPlayerInteractPearl.class
+me\zombix\mymagicpearl\Commands\AddPermissionCommand.class
 me\zombix\mymagicpearl\Actions\GivePlayerPearl.class

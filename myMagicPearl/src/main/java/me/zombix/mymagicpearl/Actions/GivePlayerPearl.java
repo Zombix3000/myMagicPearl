@@ -55,6 +55,7 @@ public class GivePlayerPearl implements Listener {
         ItemMeta meta = magicPearl.getItemMeta();
 
         String displayName = ChatColor.translateAlternateColorCodes('&', mainConfig.getString("pearl" + "." + "display-name"));
+
         meta.setDisplayName(displayName);
 
         magicPearl.setItemMeta(meta);

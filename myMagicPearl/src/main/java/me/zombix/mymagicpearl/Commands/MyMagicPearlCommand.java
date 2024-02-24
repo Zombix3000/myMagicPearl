@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyMagicPearlCommand implements CommandExecutor, TabCompleter {
-
     private final JavaPlugin plugin;
     private final ConfigManager configManager;
     private final Updates updates;
@@ -48,11 +47,33 @@ public class MyMagicPearlCommand implements CommandExecutor, TabCompleter {
                 UpdateCommand updateCommand = new UpdateCommand(configManager, updates, plugin);
                 return updateCommand.onCommand(sender, command, label, args);
             } else if (subCommand.equalsIgnoreCase("givepearl")) {
-                GivePearlCommand givePearlCommand = new GivePearlCommand(configManager, givePlayerPearl);
-                return givePearlCommand.onCommand(sender, command, label, args);
+                if (args.length > 1) {
+                    GivePearlCommand givePearlCommand = new GivePearlCommand(configManager, givePlayerPearl);
+                    return givePearlCommand.onCommand(sender, command, label, new String[]{args[1]});
+                } else {
+                    GivePearlCommand givePearlCommand = new GivePearlCommand(configManager, givePlayerPearl);
+                    return givePearlCommand.onCommand(sender, command, label, args);
+                }
             } else if (subCommand.equalsIgnoreCase("setpearllobby")) {
                 SetPearlLobbyCommand setPearlLobbyCommand = new SetPearlLobbyCommand(configManager);
                 return setPearlLobbyCommand.onCommand(sender, command, label, args);
+            } else if (subCommand.equalsIgnoreCase("permission")) {
+                if (args.length > 3) {
+                    String subCommand2 = args[1];
+
+                    if (subCommand2.equalsIgnoreCase("add")) {
+                        AddPermissionCommand addPermissionCommand = new AddPermissionCommand(configManager);
+                        return addPermissionCommand.onCommand(sender, command, label, args);
+                    } else if (subCommand2.equalsIgnoreCase("edit")) {
+                        EditPermissionCommand editPermissionCommand = new EditPermissionCommand(configManager);
+                        return editPermissionCommand.onCommand(sender, command, label, args);
+                    } else if (subCommand2.equalsIgnoreCase("delete")) {
+                        DeletePermissionCommand deletePermissionCommand = new DeletePermissionCommand(configManager);
+                        return deletePermissionCommand.onCommand(sender, command, label, args);
+                    }
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
@@ -60,6 +81,7 @@ public class MyMagicPearlCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(noPermission.replace("{sender}", sender.getName()));
             return true;
         }
+        return false;
     }
 
     @Override
@@ -80,11 +102,30 @@ public class MyMagicPearlCommand implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("mymagicpearl.setpearllobby")) {
                 subCommands.add("setpearllobby");
             }
+            if (sender.hasPermission("mymagicpearl.managepermissions")) {
+                subCommands.add("permission");
+            }
 
             subCommands.add("givepearl");
 
             for (String subCommand : subCommands) {
                 if (subCommand.startsWith(enteredCommand)) {
+                    completions.add(subCommand);
+                }
+            }
+        } else if (args.length == 2) {
+            String SubCommand = args[1].toLowerCase();
+
+            List<String> subCommands = new ArrayList<>();
+
+            if (sender.hasPermission("mymagicpearl.managepermissions")) {
+                subCommands.add("add");
+                subCommands.add("edit");
+                subCommands.add("delete");
+            }
+
+            for (String subCommand : subCommands) {
+                if (subCommand.startsWith(SubCommand)) {
                     completions.add(subCommand);
                 }
             }
