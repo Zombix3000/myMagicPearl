@@ -52,3 +52,6 @@ is-not-permission: "&cThis permission isn't in permissions.yml!"
 
 #This message will be sent if deleted permission
 deleted-permission: '&aSuccessfully deleted &6{permission} &apermission!'
+
+#This message will be sent if player try to use cooldown but is on cooldown
+player-on-cooldown: "&cYou are on cooldown, please wait &6{cooldown} &cseconds!"

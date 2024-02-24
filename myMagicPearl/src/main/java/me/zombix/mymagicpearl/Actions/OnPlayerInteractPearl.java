@@ -37,9 +37,11 @@ public class OnPlayerInteractPearl implements Listener {
     private final Map<UUID, Boolean> sneakingPlayers;
     private final Map<UUID, Integer> pearlsCooldown;
     private final Map<UUID, String> isBlocked;
+    private final Map<UUID, Integer> playerCooldown;
     private final String noPermission;
     private final String notSetLobby;
     private final String successfullyTeleportToLobby;
+    private final String onCooldown;
 
     public OnPlayerInteractPearl(JavaPlugin plugin, ConfigManager configManager) {
         FileConfiguration messagesConfig = configManager.getMessagesConfig();
@@ -51,9 +53,11 @@ public class OnPlayerInteractPearl implements Listener {
         this.sneakingPlayers = new HashMap<>();
         this.pearlsCooldown = new HashMap<>();
         this.isBlocked = new HashMap<>();
+        this.playerCooldown = new HashMap<>();
         this.noPermission = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("no-permission"));
         this.notSetLobby = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("not-set-lobby"));
         this.successfullyTeleportToLobby = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("successfully-teleport-to-lobby"));
+        this.onCooldown = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("player-on-cooldown"));
     }
 
     @EventHandler
@@ -72,6 +76,7 @@ public class OnPlayerInteractPearl implements Listener {
                         } else {
                             event.setCancelled(true);
                             isBlocked.put(player.getUniqueId(), "Nothing");
+                            player.sendMessage(onCooldown.replace("{cooldown}", playerCooldown.get(player.getUniqueId()).toString()));
                         }
                     } else {
                         event.setCancelled(true);
@@ -247,9 +252,11 @@ public class OnPlayerInteractPearl implements Listener {
                 int remaining = pearlsCooldown.getOrDefault(player.getUniqueId(), 1);
                 if (remaining <= 1) {
                     pearlsCooldown.remove(player.getUniqueId());
+                    playerCooldown.remove(player.getUniqueId());
                 } else {
                     pearlsCooldown.put(player.getUniqueId(), remaining - 1);
                     giveCooldownPearls(player, remaining - 1);
+                    playerCooldown.put(player.getUniqueId(), remaining - 1);
                 }
             }
         }, 20L, 20L);

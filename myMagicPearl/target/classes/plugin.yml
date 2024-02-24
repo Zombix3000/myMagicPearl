@@ -1,5 +1,5 @@
 name: myMagicPearl
-version: '1.1'
+version: '1.1.1'
 main: me.zombix.mymagicpearl.MyMagicPearl
 api-version: '1.20'
 commands:
