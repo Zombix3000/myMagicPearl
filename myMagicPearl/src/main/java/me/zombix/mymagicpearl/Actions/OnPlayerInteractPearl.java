@@ -42,9 +42,11 @@ public class OnPlayerInteractPearl implements Listener {
     private final String notSetLobby;
     private final String successfullyTeleportToLobby;
     private final String onCooldown;
+    private final Sound actionFailedSound;
 
     public OnPlayerInteractPearl(JavaPlugin plugin, ConfigManager configManager) {
         FileConfiguration messagesConfig = configManager.getMessagesConfig();
+        FileConfiguration mainConfig = configManager.getMainConfig();
 
         this.plugin = plugin;
         this.configManager = configManager;
@@ -58,6 +60,7 @@ public class OnPlayerInteractPearl implements Listener {
         this.notSetLobby = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("not-set-lobby"));
         this.successfullyTeleportToLobby = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("successfully-teleport-to-lobby"));
         this.onCooldown = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("player-on-cooldown"));
+        this.actionFailedSound = Sound.valueOf(mainConfig.getString("action-failed-sound.sound"));
     }
 
     @EventHandler
@@ -77,11 +80,17 @@ public class OnPlayerInteractPearl implements Listener {
                             event.setCancelled(true);
                             isBlocked.put(player.getUniqueId(), "Nothing");
                             player.sendMessage(onCooldown.replace("{cooldown}", playerCooldown.get(player.getUniqueId()).toString()));
+                            if (mainConfig.getBoolean("action-failed-sound.enabled")) {
+                                player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
+                            }
                         }
                     } else {
                         event.setCancelled(true);
                         isBlocked.put(player.getUniqueId(), "Nothing");
                         player.sendMessage(noPermission.replace("{player}", player.getName()));
+                        if (mainConfig.getBoolean("action-failed-sound.enabled")) {
+                            player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
+                        }
                     }
                 }
             }
@@ -168,9 +177,15 @@ public class OnPlayerInteractPearl implements Listener {
                                 player.sendMessage(successfullyTeleportToLobby.replace("{player}", player.getName()));
                             } else {
                                 player.sendMessage(notSetLobby.replace("{player}", player.getName()));
+                                if (mainConfig.getBoolean("action-failed-sound.enabled")) {
+                                    player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
+                                }
                             }
                         } else {
                             player.sendMessage(noPermission.replace("{player}", player.getName()));
+                            if (mainConfig.getBoolean("action-failed-sound.enabled")) {
+                                player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
+                            }
                         }
                     }
                 }
@@ -189,6 +204,7 @@ public class OnPlayerInteractPearl implements Listener {
 
     public void trackThrownPearl(Player player, EnderPearl enderPearl) {
         UUID playerUUID = player.getUniqueId();
+        FileConfiguration mainConfig = configManager.getMainConfig();
         thrownPearls.put(playerUUID, enderPearl);
         thrownMagicPearls.put("Nothing", enderPearl);
 
@@ -198,6 +214,10 @@ public class OnPlayerInteractPearl implements Listener {
             @Override
             public void run() {
                 showActionBar(player);
+
+                if (mainConfig.getBoolean("pearl-particles.enabled")) {
+                    enderPearl.getWorld().spawnParticle(Particle.valueOf(mainConfig.getString("pearl-particles.particle")), enderPearl.getLocation(), mainConfig.getInt("pearl-particles.intensity"));
+                }
 
                 if (!enderPearl.isValid()) {
                     thrownPearls.remove(playerUUID);

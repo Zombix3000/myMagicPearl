@@ -4,11 +4,13 @@ import me.zombix.mymagicpearl.Actions.GivePlayerPearl;
 import me.zombix.mymagicpearl.Config.ConfigManager;
 import me.zombix.mymagicpearl.Config.Updates;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -20,15 +22,18 @@ public class MyMagicPearlCommand implements CommandExecutor, TabCompleter {
     private final Updates updates;
     private final GivePlayerPearl givePlayerPearl;
     private final String noPermission;
+    private final Sound actionFailedSound;
 
     public MyMagicPearlCommand(JavaPlugin plugin, ConfigManager configManager, Updates updates, GivePlayerPearl givePlayerPearl) {
         FileConfiguration messagesConfig = configManager.getMessagesConfig();
+        FileConfiguration mainConfig = configManager.getMainConfig();
 
         this.plugin = plugin;
         this.givePlayerPearl = givePlayerPearl;
         this.configManager = configManager;
         this.updates = updates;
         this.noPermission = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("no-permission"));
+        this.actionFailedSound = Sound.valueOf(mainConfig.getString("action-failed-sound.sound"));
     }
 
     @Override
@@ -79,6 +84,13 @@ public class MyMagicPearlCommand implements CommandExecutor, TabCompleter {
             }
         } else {
             sender.sendMessage(noPermission.replace("{sender}", sender.getName()));
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                FileConfiguration mainConfig = configManager.getMainConfig();
+                if (mainConfig.getBoolean("action-failed-sound.enabled")) {
+                    player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
+                }
+            }
             return true;
         }
         return false;
@@ -118,10 +130,12 @@ public class MyMagicPearlCommand implements CommandExecutor, TabCompleter {
 
             List<String> subCommands = new ArrayList<>();
 
-            if (sender.hasPermission("mymagicpearl.managepermissions")) {
-                subCommands.add("add");
-                subCommands.add("edit");
-                subCommands.add("delete");
+            if (SubCommand.equals("permission")) {
+                if (sender.hasPermission("mymagicpearl.managepermissions")) {
+                    subCommands.add("add");
+                    subCommands.add("edit");
+                    subCommands.add("delete");
+                }
             }
 
             for (String subCommand : subCommands) {

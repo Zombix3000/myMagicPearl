@@ -3,6 +3,7 @@ package me.zombix.mymagicpearl.Actions;
 import me.zombix.mymagicpearl.Config.ConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,13 +20,16 @@ public class GivePlayerPearl implements Listener {
     private final JavaPlugin plugin;
     private final ConfigManager configManager;
     private final String slotIsBusy;
+    private final Sound actionFailedSound;
 
     public GivePlayerPearl(JavaPlugin plugin, ConfigManager configManager) {
         FileConfiguration messagesConfig = configManager.getMessagesConfig();
+        FileConfiguration mainConfig = configManager.getMainConfig();
 
         this.plugin = plugin;
         this.configManager = configManager;
         this.slotIsBusy = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("slot-is-busy"));
+        this.actionFailedSound = Sound.valueOf(mainConfig.getString("action-failed-sound.sound"));
     }
 
     public void givePearl(Player player) {
@@ -35,6 +39,9 @@ public class GivePlayerPearl implements Listener {
         if (slot >= 0 && slot < player.getInventory().getSize()) {
             if (player.getInventory().getItem(slot) != null && !mainConfig.getBoolean("replace-item")) {
                 player.sendMessage(slotIsBusy.replace("{player}", player.getName()));
+                if (mainConfig.getBoolean("action-failed-sound.enabled")) {
+                    player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
+                }
             } else {
                 ItemStack magicPearl = new ItemStack(Material.ENDER_PEARL);
                 ItemMeta meta = magicPearl.getItemMeta();

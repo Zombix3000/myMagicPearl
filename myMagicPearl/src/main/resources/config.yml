@@ -38,3 +38,14 @@ replace-item: true
 subtitles-enabled: true
 subtitles:
   action-bar: "&eUsing pearl..."
+
+#Sounds
+action-failed-sound:
+  enabled: false
+  sound: ENTITY_VILLAGER_NO
+
+#Particles
+pearl-particles:
+  enabled: false
+  particle: VILLAGER_HAPPY
+  intensity: 1

@@ -19,7 +19,7 @@ public class CommandsTabCompleter implements TabCompleter {
             List<String> subCommands = new ArrayList<>();
 
             if (command.getName().toLowerCase().equals("mymagicpearl")) {
-                if (sender.hasPermission("mymagicpearl.reload") || sender.isOp()) {
+                if (sender.hasPermission("mymagicpearl.reload")) {
                     subCommands.add("reload");
                 }
                 if (sender.hasPermission("mymagicpearl.reload")) {
@@ -46,10 +46,12 @@ public class CommandsTabCompleter implements TabCompleter {
             List<String> subCommands = new ArrayList<>();
 
             if (command.getName().toLowerCase().equals("mymagicpearl")) {
-                if (sender.hasPermission("mymagicpearl.managepermissions")) {
-                    subCommands.add("add");
-                    subCommands.add("edit");
-                    subCommands.add("delete");
+                if (SubCommand.equals("permission")) {
+                    if (sender.hasPermission("mymagicpearl.managepermissions")) {
+                        subCommands.add("add");
+                        subCommands.add("edit");
+                        subCommands.add("delete");
+                    }
                 }
             }
 
