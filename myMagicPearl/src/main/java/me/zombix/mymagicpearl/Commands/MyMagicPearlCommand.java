@@ -16,6 +16,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class MyMagicPearlCommand implements CommandExecutor, TabCompleter {
     private final JavaPlugin plugin;
     private final ConfigManager configManager;
@@ -131,6 +133,7 @@ public class MyMagicPearlCommand implements CommandExecutor, TabCompleter {
             List<String> subCommands = new ArrayList<>();
 
             if (SubCommand.equals("permission")) {
+                getLogger().info("perm");
                 if (sender.hasPermission("mymagicpearl.managepermissions")) {
                     subCommands.add("add");
                     subCommands.add("edit");

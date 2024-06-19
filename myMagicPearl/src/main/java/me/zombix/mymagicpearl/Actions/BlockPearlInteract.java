@@ -8,9 +8,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class BlockPearlInteract implements Listener {
     private final ConfigManager configManager;
@@ -46,11 +49,15 @@ public class BlockPearlInteract implements Listener {
         ItemStack item = event.getCurrentItem();
 
         if (item != null && item.getType() == Material.ENDER_PEARL && item.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', mainConfig.getString("pearl" + "." + "display-name")))) {
-            event.setCancelled(true);
-            event.getWhoClicked().sendMessage(cannotDoIt);
-            if (mainConfig.getBoolean("action-failed-sound.enabled")) {
-                Player player = (Player) event.getWhoClicked();
-                player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
+            if (event.getClick() == ClickType.CREATIVE && mainConfig.getBoolean("creative-actions")) {
+                return;
+            } else {
+                event.setCancelled(true);
+                event.getWhoClicked().sendMessage(cannotDoIt);
+                if (mainConfig.getBoolean("action-failed-sound.enabled")) {
+                    Player player = (Player) event.getWhoClicked();
+                    player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
+                }
             }
         }
     }

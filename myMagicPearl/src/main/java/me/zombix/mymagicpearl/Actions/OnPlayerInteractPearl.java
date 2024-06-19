@@ -69,27 +69,33 @@ public class OnPlayerInteractPearl implements Listener {
             EnderPearl enderPearl = (EnderPearl) event.getEntity();
             FileConfiguration mainConfig = configManager.getMainConfig();
 
-            if (enderPearl.getItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', mainConfig.getString("pearl" + "." + "display-name")))) {
-                if (enderPearl.getShooter() instanceof Player) {
-                    Player player = (Player) enderPearl.getShooter();
+            if (enderPearl.getItem() != null && enderPearl.getItem().hasItemMeta()) {
+                ItemMeta itemMeta = enderPearl.getItem().getItemMeta();
+                if (itemMeta != null && itemMeta.getDisplayName() != null && itemMeta.getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', mainConfig.getString("pearl.display-name")))) {
+                    if (enderPearl.getShooter() instanceof Player) {
+                        Player player = (Player) enderPearl.getShooter();
 
-                    if (player.hasPermission("mymagicpearl.throwpearl")) {
-                        if (!pearlsCooldown.containsKey(player.getUniqueId())) {
-                            trackThrownPearl(player, enderPearl);
+                        if (player.hasPermission("mymagicpearl.throwpearl")) {
+                            if (!pearlsCooldown.containsKey(player.getUniqueId())) {
+                                trackThrownPearl(player, enderPearl);
+                            } else {
+                                event.setCancelled(true);
+                                isBlocked.put(player.getUniqueId(), "Nothing");
+                                Integer cooldownValue = playerCooldown.get(player.getUniqueId());
+                                if (cooldownValue != null) {
+                                    player.sendMessage(onCooldown.replace("{cooldown}", cooldownValue.toString()));
+                                }
+                                if (mainConfig.getBoolean("action-failed-sound.enabled")) {
+                                    player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
+                                }
+                            }
                         } else {
                             event.setCancelled(true);
                             isBlocked.put(player.getUniqueId(), "Nothing");
-                            player.sendMessage(onCooldown.replace("{cooldown}", playerCooldown.get(player.getUniqueId()).toString()));
+                            player.sendMessage(noPermission.replace("{player}", player.getName()));
                             if (mainConfig.getBoolean("action-failed-sound.enabled")) {
                                 player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
                             }
-                        }
-                    } else {
-                        event.setCancelled(true);
-                        isBlocked.put(player.getUniqueId(), "Nothing");
-                        player.sendMessage(noPermission.replace("{player}", player.getName()));
-                        if (mainConfig.getBoolean("action-failed-sound.enabled")) {
-                            player.playSound(player.getLocation(), actionFailedSound, 1.0f, 1.0f);
                         }
                     }
                 }
@@ -99,7 +105,7 @@ public class OnPlayerInteractPearl implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof EnderPearl) {
+        if (event.getDamager() instanceof EnderPearl && event.getEntity() instanceof Player) {
             EnderPearl enderPearl = (EnderPearl) event.getDamager();
             Player player = (Player) event.getEntity();
             FileConfiguration mainConfig = configManager.getMainConfig();

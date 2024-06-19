@@ -34,6 +34,9 @@ pearl-give-damage: false
 #Replace item on slot
 replace-item: true
 
+#Allow to do with pearl anything on creative mode
+creative-actions: false
+
 #Pearl subtitles
 subtitles-enabled: true
 subtitles:
