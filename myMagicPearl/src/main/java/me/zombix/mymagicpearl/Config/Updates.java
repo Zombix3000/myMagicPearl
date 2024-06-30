@@ -1,5 +1,6 @@
 package me.zombix.mymagicpearl.Config;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.Bukkit;
@@ -38,10 +39,13 @@ public class Updates {
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
-                JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
-                String latestVersion = jsonObject.get("tag_name").getAsString();
+                InputStreamReader reader = new InputStreamReader(inputStream);
 
-                return !latestVersion.equals(currentVersion);
+                JsonObject jsonObject = parseJson(reader);
+                if (jsonObject != null) {
+                    String latestVersion = jsonObject.get("tag_name").getAsString();
+                    return !latestVersion.equals(currentVersion);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,13 +62,32 @@ public class Updates {
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
-                JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
-                return jsonObject.get("tag_name").getAsString().replace("v", "");
+                InputStreamReader reader = new InputStreamReader(inputStream);
+
+                JsonObject jsonObject = parseJson(reader);
+                if (jsonObject != null) {
+                    return jsonObject.get("tag_name").getAsString().replace("v", "");
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private JsonObject parseJson(InputStreamReader reader) {
+        try {
+            JsonElement jsonElement;
+            try {
+                jsonElement = JsonParser.parseReader(reader);
+            } catch (NoSuchMethodError e) {
+                jsonElement = new JsonParser().parse(reader);
+            }
+            return jsonElement.getAsJsonObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void updatePlugin() {
@@ -131,16 +154,11 @@ public class Updates {
     private boolean loadPlugin(String latestVersion) {
         try {
             PluginManager pluginManager = Bukkit.getPluginManager();
-            Plugin targetPlugin = pluginManager.getPlugin(pluginName);
+            File newFile = new File("plugins/" + pluginName + "-" + latestVersion.replace("v", "") + ".jar");
 
-            if (targetPlugin != null) {
-                File newFile = new File("plugins/" + pluginName + "-" + latestVersion.replace("v", "") + ".jar");
-                try {
-                    Plugin newPlugin = pluginManager.loadPlugin(newFile);
-                    pluginManager.enablePlugin(newPlugin);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            if (newFile.exists()) {
+                Plugin newPlugin = pluginManager.loadPlugin(newFile);
+                pluginManager.enablePlugin(newPlugin);
                 return true;
             } else {
                 return false;

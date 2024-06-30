@@ -219,7 +219,9 @@ public class OnPlayerInteractPearl implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                showActionBar(player);
+                if (mainConfig.getBoolean("subtitles-enabled")) {
+                    showActionBar(player);
+                }
 
                 if (mainConfig.getBoolean("pearl-particles.enabled")) {
                     enderPearl.getWorld().spawnParticle(Particle.valueOf(mainConfig.getString("pearl-particles.particle")), enderPearl.getLocation(), mainConfig.getInt("pearl-particles.intensity"));

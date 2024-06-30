@@ -13,8 +13,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import static org.bukkit.Bukkit.getLogger;
-
 public class BlockPearlInteract implements Listener {
     private final ConfigManager configManager;
     private final String cannotDoIt;
