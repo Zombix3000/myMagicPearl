@@ -28,7 +28,7 @@ public final class MyMagicPearl extends JavaPlugin {
 
         if (ConfigManager.getMainConfig().getBoolean("check-for-updates")) {
             getLogger().info("Checking for updates...");
-            //checkForUpdates();
+            checkForUpdates();
         }
     }
 
