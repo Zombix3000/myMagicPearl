@@ -1,0 +1,49 @@
+######################################
+# --- myMagicPearl v2.0.0 Plugin --- #
+######################################
+
+#This is a messages for myMagicPearl plugin!
+#More info you can find in plugin documentation or in our discord: https://discord.gg/qTpgQXQZye
+
+#Color codes: &
+#Variables:
+#{player} - Usage in all without "bad-sender" but not reccomended for most only: "bad-item", "successfully-add-item", "no-permission-minecraft"
+#{user} - Usage in "check-user"
+#{uses} - Usage in "check-user"
+#{provided-user} - Usage in "check-user" and "bad-user"
+
+#This message will be sent if player do something but doesn't have permission to do this
+no-permission: "&cYou don't have permission to do that!"
+
+#This message will be sent if command sender is not a player
+bad-sender: "&cThis command can only be used by a player!"
+
+#This message will be sent if player is not online
+player-not-online: "&cPlayer is not online!"
+
+#This message will be sent if player try to get pearl but can't because slot is busy
+slot-is-busy: "&cSlot in inventory is busy!"
+
+#This message will be sent if player try to set pearl but don't have it in hand
+bad-item: "&cYou don't have a pearl in hand!"
+
+#This message will be sent if player successfully set pearl
+successfully-set-pearl: "&aSuccessfully set pearl!"
+
+#This message will be sent if player successfully set pearl lobby
+successfully-set-lobby: "&aSuccessfully set pearl lobby!"
+
+#This message will be sent if player try to use pearl but is on cooldown
+player-on-cooldown: "&cYou are on cooldown, please wait &6{cooldown} &cseconds!"
+
+#This message will be sent if player was successfully teleported to pearl lobby
+successfully-teleport-to-lobby: "&aSuccessfully teleported to pearl lobby!"
+
+#This message will be sent if player try to teleport to lobby, but it not set
+not-set-lobby: "&cYou don't set pearl lobby!"
+
+#This message will be sent if successfully added new permission
+added-permission: "&aSuccessfully added new permission!"
+
+#This message will be sent if deleted permission
+deleted-permission: '&aSuccessfully deleted permission!'
